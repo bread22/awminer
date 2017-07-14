@@ -20,11 +20,13 @@ while True:
     top_algo = zpool.getTopProfit()         # get top algo
     if current_algo:
         process.kill()                      # kill current miner, it doesn't hurt
-        stratum = 'stratum+tcp://' + top_algo['algo'] + pool_url_base + ':' + top_algo['port']
-        process = subprocess.Popen([top_algo['miner'], '-a', top_algo['algo'], '-o', stratum, '-u',
-                                    machine['wallet'], '-p', machine['name'], 'c=BTC'])
+        current_algo = top_algo
+    # start new mining process
+    stratum = 'stratum+tcp://' + top_algo['algo'] + pool_url_base + ':' + top_algo['port']
+    process = subprocess.Popen([top_algo['miner'], '-a', top_algo['algo'], '-o', stratum, '-u',
+                                machine['wallet'], '-p', machine['name'], 'c=BTC'])
 
-
+    time.sleep(machine['interval'])
     # process = subprocess.Popen(['ping', '-t', '127.0.0.1'])
     # time.sleep(10)
     # process.kill()
