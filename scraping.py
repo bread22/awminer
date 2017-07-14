@@ -20,74 +20,75 @@ class Render(QWebPage):
     self.app.quit()
 
 
-def parseZpool(texts):
-    profit_dict = {}
-    fee_pos = 0
-    with open('algos_zpool.json') as fn:
-        pool_dict = json.load(fn)
+class MiningPool(object):
+    def __init__(self, url, config):
+        self.url = url
+        self.config = config        # pool configuration file name in json format
+        self.profit_dict = {}
 
-    profit_dict = pool_dict
+    def parseZpool(self, page_txts):
+        fee_pos = 0
+        with open(self.config) as fn:
+            pool_dict = json.load(fn)
 
-    for i in range(len(texts)):
-        if texts[i] in pool_dict:
-            for j in range(1, 5):
-                if "%" in texts[i+j]:
-                    fee_pos = j                 # fee postion, +3 is profit, -2 is miners
-                    break
-            profit_dict[texts[i]]['normalized_profit'] = float(texts[i+fee_pos+3])
-            profit_dict[texts[i]]['miner_qty'] = int(texts[i+fee_pos-2])
-            profit_dict[texts[i]]['actual_profit'] = profit_dict[texts[i]]['normalized_profit'] \
-                * pool_dict[texts[i]]['hashrate']
+        profit_dict = pool_dict
 
-    with open('profits_zpool.json', 'w') as fn:
-        json.dump(profit_dict, fn)
+        for i in range(len(page_txts)):
+            if page_txts[i] in pool_dict:
+                for j in range(1, 5):
+                    if "%" in page_txts[i+j]:
+                        fee_pos = j                 # use fee as anchor position, +3 is profit, -2 is miners
+                        break
+                profit_dict[page_txts[i]]['normalized_profit'] = float(page_txts[i+fee_pos+3])
+                profit_dict[page_txts[i]]['miner_qty'] = int(page_txts[i+fee_pos-2])
+                profit_dict[page_txts[i]]['actual_profit'] = profit_dict[page_txts[i]]['normalized_profit'] \
+                    * pool_dict[page_txts[i]]['hashrate']
 
-    return profit_dict
+        with open('profits_zpool.json', 'w') as fn:
+            json.dump(profit_dict, fn)
 
+        return profit_dict
 
-url = 'http://zpool.ca/'
-# This does the magic.Loads everything
-r = Render(url)
-# result is a QString.
-result = r.frame.toHtml()
+    def getTopProfit(self):
+        # This does the magic.Loads everything
+        r = Render(self.url)
+        # result is a QString.
+        result = r.frame.toHtml()
 
-# QString should be converted to string before processed by lxml
-formatted_result = str(result.toAscii())
+        # QString should be converted to string before processed by lxml
+        formatted_result = str(result.toAscii())
 
-# with open('zpool_output.html', 'w') as fn:
-#     fn.write(formatted_result)
+        # with open('zpool_output.html', 'w') as fn:
+        #     fn.write(formatted_result)
+        # print formatted_result
 
+        # Next build lxml tree from formatted_result
+        tree = html.fromstring(formatted_result)
 
-# print formatted_result
+        # Now using correct Xpath we are fetching URL of archives
+        data = tree.xpath('///tbody/tr/td[text()]')
 
-# Next build lxml tree from formatted_result
-tree = html.fromstring(formatted_result)
+        txt = [item.text_content() for item in data]
+        # text = str(''.join(str(txt)))
+        # with open('zpool_output.txt', 'w') as fn:
+        #     fn.write(text)
 
-# Now using correct Xpath we are fetching URL of archives
-data = tree.xpath('///tbody/tr/td[text()]')
-# for item in data:
-#     print item.text_content()
-#     pass
+        profit_dict = self.parseZpool(txt)
 
-txt = [item.text_content() for item in data]
-text = str(''.join(str(txt)))
-with open('zpool_output.txt', 'w') as fn:
-    fn.write(text)
+        print profit_dict
 
-profit_dict = parseZpool(txt)
+        top_port = ''
+        top_algo = ''
+        top_profit = 0
+        for key in profit_dict:
+            print profit_dict[key]['algo'], profit_dict[key]['actual_profit']
+            if profit_dict[key]['actual_profit'] > top_profit and profit_dict[key]['miner_qty'] > 10:
+                top_port = key
+                top_algo = profit_dict[key]['algo']
+                top_profit = profit_dict[key]['actual_profit']
 
-print profit_dict
+        print "Algo: ", top_algo
+        print "Port: ", top_port
+        print "Profit: ", top_profit
 
-top_port = ''
-top_algo = ''
-top_profit = 0
-for key in profit_dict:
-    print profit_dict[key]['algo'], profit_dict[key]['actual_profit']
-    if profit_dict[key]['actual_profit'] > top_profit and profit_dict[key]['miner_qty'] > 10:
-        top_port = key
-        top_algo = profit_dict[key]['algo']
-        top_profit = profit_dict[key]['actual_profit']
-
-print "Algo: ", top_algo
-print "Port: ", top_port
-print "Profit: ", top_profit
+        return profit_dict
