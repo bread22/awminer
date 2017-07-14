@@ -1,92 +1,122 @@
 {
 	"2142":	{
 		"algo": "equihash",
-		"hashrate": 0.67},
+		"hashrate": 0.67,
+		"miner": "zminer.exe"},
 	"3556": {
 		"algo": "bitcore",
-		"hashrate": 25},
+		"hashrate": 25,
+		"miner": "ccminerTanguy.exe"},
 	"4233":	{
 		"algo": "neoscrypt",
-		"hashrate": 0.51},
+		"hashrate": 0.51,
+		"miner": "ccminerTanguy.exe"},
 	"3739": {
 		"algo": "xevan",
-		"hashrate": 0},
+		"hashrate": 0,
+		"miner": None},
 	"6033":	{
 		"algo": "m7m",
-		"hashrate": 0},
+		"hashrate": 0,
+		"miner": None},
 	"3747": {
 		"algo": "hmq1725",
-		"hashrate": 7.5},
+		"hashrate": 7.5,
+		"miner": "ccminerTanguy.exe"},
 	"5743":	{
 		"algo": "blakecoin",
-		"hashrate": 8.2},
+		"hashrate": 8.2,
+		"miner": "ccminerTanguy.exe"},
 	"5744": {
 		"algo": "decred",
-		"hashrate": 4.8},
+		"hashrate": 4.8,
+		"miner": "ccminerTanguy.exe"},
 	"3573":	{
 		"algo": "c11",
-		"hashrate": 28},
+		"hashrate": 28,
+		"miner": "ccminerAlexis78.exe"},
 	"5766": {
 		"algo": "blake2s",
-		"hashrate": 6.6},
+		"hashrate": 6.6,
+		"miner": "ccminerAlexis78.exe"},
 	"3737":	{
 		"algo": "x17",
-		"hashrate": 18},
+		"hashrate": 18,
+		"miner": "ccminerAlexis78.exe"},
 	"3433": {
 		"algo": "scrypt",
-		"hashrate": 0},
+		"hashrate": 0,
+		"miner": None},
 	"5033":	{
 		"algo": "sib",
-		"hashrate": 22},
+		"hashrate": 22,
+		"miner": "ccminerAlexis78.exe"},
 	"3553": {
 		"algo": "x11evo",
-		"hashrate": 24},
+		"hashrate": 24,
+		"miner": "ccminerAlexis78.exe"},
 	"5034":	{
 		"algo": "veltor",
-		"hashrate": 54},
+		"hashrate": 54,
+		"miner": "ccminerAlexis78.exe"},
 	"6233": {
 		"algo": "yescrypt",
-		"hashrate": 0},
+		"hashrate": 0,
+		"miner": None},
 	"3833":	{
 		"algo": "nist5",
-		"hashrate": 70},
+		"hashrate": 70,
+		"miner": "ccminerAlexis78.exe"},
 	"8533": {
 		"algo": "tribus",
-		"hashrate": 73},
+		"hashrate": 73,
+		"miner": "ccminer-x64.exe"},
 	"3533":	{
 		"algo": "x11",
-		"hashrate": 20},
+		"hashrate": 20,
+		"miner": None},
 	"4733": {
 		"algo": "qubit",
-		"hashrate": 48},
+		"hashrate": 48,
+		"miner": None},
 	"3733":	{
 		"algo": "x15",
-		"hashrate": 20},
+		"hashrate": 20,
+		"miner": None},
 	"3334": {
 		"algo": "lbry",
-		"hashrate": 500},
+		"hashrate": 0,
+		"miner": "ccminerAlexis78.exe"},
 	"5333":	{
 		"algo": "groestl",
-		"hashrate": 68},
+		"hashrate": 68,
+		"miner": "ccminerTanguy.exe"},
 	"5433": {
 		"algo": "myr-gr",
-		"hashrate": 130},
+		"hashrate": 130,
+		"miner": "ccminerAlexis78.exe"},
 	"3555":	{
 		"algo": "timetravel",
-		"hashrate": 40},
+		"hashrate": 40,
+		"miner": "ccminerTanguy.exe"},
 	"4033": {
 		"algo": "quark",
-		"hashrate": 50},
+		"hashrate": 50,
+		"miner": None},
 	"3633":	{
 		"algo": "x13",
-		"hashrate": 15},
+		"hashrate": 15,
+		"miner": None},
 	"3933": {
 		"algo": "x14",
-		"hashrate": 21},	
+		"hashrate": 21,
+		"miner": None},	
 	"4933": {
 		"algo": "skein",
-		"hashrate": 970},
+		"hashrate": 970,
+		"miner": "ccminerAlexis78.exe"},
 	"3333":	{
 		"algo": "sha256",
-		"hashrate": 0}
+		"hashrate": 0,
+		"miner": None}
 }
