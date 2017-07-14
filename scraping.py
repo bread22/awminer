@@ -40,7 +40,7 @@ def parseZpool(texts):
                 * pool_dict[texts[i]]['hashrate']
 
     with open('profits_zpool.json', 'w') as fn:
-        json.dump(pool_dict, fn)
+        json.dump(profit_dict, fn)
 
     return profit_dict
 
