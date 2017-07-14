@@ -29,15 +29,21 @@ result = r.frame.toHtml()
 # QString should be converted to string before processed by lxml
 formatted_result = str(result.toAscii())
 
+# with open('zpool_output.html', 'w') as fn:
+#     fn.write(formatted_result)
+
+
 # print formatted_result
 
 # Next build lxml tree from formatted_result
 tree = html.fromstring(formatted_result)
 
 # Now using correct Xpath we are fetching URL of archives
-data = tree.xpath('///tr/td[text()]')
-for item in data:
-    print item.text_content()
-    pass
+data = tree.xpath('///tbody/tr/td[text()]')
+# for item in data:
+#     print item.text_content()
+#     pass
+
+txt = [item.text_content() for item in data]
 
 print type(data[0])
