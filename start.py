@@ -26,7 +26,7 @@ while True:
     process = subprocess.Popen([top_algo['miner'], '-a', top_algo['algo'], '-o', stratum, '-u',
                                 machine['wallet'], '-p', machine['name'], 'c=BTC'])
 
-    time.sleep(machine['interval'])
+    time.sleep(machine['interval']*60)
     # process = subprocess.Popen(['ping', '-t', '127.0.0.1'])
     # time.sleep(10)
     # process.kill()
