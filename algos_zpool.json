@@ -14,11 +14,11 @@
 	"3739": {
 		"algo": "xevan",
 		"hashrate": 0,
-		"miner": None},
+		"miner": null},
 	"6033":	{
 		"algo": "m7m",
 		"hashrate": 0,
-		"miner": None},
+		"miner": null},
 	"3747": {
 		"algo": "hmq1725",
 		"hashrate": 7.5,
@@ -46,7 +46,7 @@
 	"3433": {
 		"algo": "scrypt",
 		"hashrate": 0,
-		"miner": None},
+		"miner": null},
 	"5033":	{
 		"algo": "sib",
 		"hashrate": 22,
@@ -62,7 +62,7 @@
 	"6233": {
 		"algo": "yescrypt",
 		"hashrate": 0,
-		"miner": None},
+		"miner": null},
 	"3833":	{
 		"algo": "nist5",
 		"hashrate": 70,
@@ -74,15 +74,15 @@
 	"3533":	{
 		"algo": "x11",
 		"hashrate": 20,
-		"miner": None},
+		"miner": null},
 	"4733": {
 		"algo": "qubit",
 		"hashrate": 48,
-		"miner": None},
+		"miner": null},
 	"3733":	{
 		"algo": "x15",
 		"hashrate": 20,
-		"miner": None},
+		"miner": null},
 	"3334": {
 		"algo": "lbry",
 		"hashrate": 0,
@@ -102,15 +102,15 @@
 	"4033": {
 		"algo": "quark",
 		"hashrate": 50,
-		"miner": None},
+		"miner": null},
 	"3633":	{
 		"algo": "x13",
 		"hashrate": 15,
-		"miner": None},
+		"miner": null},
 	"3933": {
 		"algo": "x14",
 		"hashrate": 21,
-		"miner": None},	
+		"miner": null},	
 	"4933": {
 		"algo": "skein",
 		"hashrate": 970,
@@ -118,5 +118,5 @@
 	"3333":	{
 		"algo": "sha256",
 		"hashrate": 0,
-		"miner": None}
+		"miner": null}
 }
