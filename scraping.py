@@ -79,16 +79,18 @@ class MiningPool(object):
 
         top_port = ''
         top_algo = ''
+        top_miner = ''
         top_profit = 0
         for key in profit_dict:
-            print profit_dict[key]['algo'], profit_dict[key]['actual_profit']
+            # print profit_dict[key]['algo'], profit_dict[key]['actual_profit']
             if profit_dict[key]['actual_profit'] > top_profit and profit_dict[key]['miner_qty'] > 10:
                 top_port = key
                 top_algo = profit_dict[key]['algo']
                 top_profit = profit_dict[key]['actual_profit']
+                top_miner = profit_dict[key]['miner']
 
-        print "Algo: ", top_algo
-        print "Port: ", top_port
-        print "Profit: ", top_profit
+        # print "Algo: ", top_algo
+        # print "Port: ", top_port
+        # print "Profit: ", top_profit
 
-        return profit_dict
+        return {'algo': top_algo, 'port': top_port, 'profit': top_profit, 'miner': top_miner}
