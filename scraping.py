@@ -35,12 +35,12 @@ def parseZpool(texts):
                     fee_pos = j                 # fee postion, +3 is profit, -2 is miners
                     break
             profit_dict[texts[i]]['normalized_profit'] = float(texts[i+fee_pos+3])
-            profit_dict[texts[i]]['miner_qty'] = texts[i+fee_pos-2]
+            profit_dict[texts[i]]['miner_qty'] = int(texts[i+fee_pos-2])
             profit_dict[texts[i]]['actual_profit'] = profit_dict[texts[i]]['normalized_profit'] \
                 * pool_dict[texts[i]]['hashrate']
 
-    # with open('profits_zpool.json', 'w') as fn:
-    #     json.dump(pool_dict, fn)
+    with open('profits_zpool.json', 'w') as fn:
+        json.dump(pool_dict, fn)
 
     return profit_dict
 
@@ -74,4 +74,20 @@ text = str(''.join(str(txt)))
 with open('zpool_output.txt', 'w') as fn:
     fn.write(text)
 
-parseZpool(txt)
+profit_dict = parseZpool(txt)
+
+print profit_dict
+
+top_port = ''
+top_algo = ''
+top_profit = 0
+for key in profit_dict:
+    print profit_dict[key]['algo'], profit_dict[key]['actual_profit']
+    if profit_dict[key]['actual_profit'] > top_profit and profit_dict[key]['miner_qty'] > 10:
+        top_port = key
+        top_algo = profit_dict[key]['algo']
+        top_profit = profit_dict[key]['actual_profit']
+
+print "Algo: ", top_algo
+print "Port: ", top_port
+print "Profit: ", top_profit
