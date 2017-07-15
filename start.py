@@ -32,6 +32,7 @@ while True:
         time.sleep(600)
         top_algo = zpool.getTopProfit()     # if getTopProfit returns False, wait 10 minutes and retry
     logger.info(top_algo)
+
     if current_algo:
         process.kill()                      # kill current miner, it doesn't hurt
         logger.info('Killing current miner')
@@ -46,6 +47,11 @@ while True:
     process = subprocess.Popen([top_algo['miner'], '-a', top_algo['algo'], '-o', stratum, '-u',
                                 machine['wallet'], '-p', machine['name'], 'c=BTC'])
 
-    # time.sleep(60)
-    time.sleep(machine['interval']*60)
+    timer = 0
+    while timer < machine['switch_interval']:
+        timer += 1
+        if process.poll() == 0:             # if mining process dies, break wait loop and start next one
+            break
+        time.sleep(60)
+
 
