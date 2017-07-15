@@ -1,9 +1,12 @@
 import json
 import re
+import logging
 from selenium import webdriver
 
 
 __author__ = 'wuqingyi22@gmail.com'
+
+logger = logging.getLogger('runtime.log')
 
 
 class MiningPool(object):
@@ -25,16 +28,28 @@ class MiningPool(object):
             url2 = 'http://zpool.ca/site/graph_price_results'
             url3 = 'http://zpool.ca/site/mining_results'
             wd = webdriver.PhantomJS()
-            wd.get(url1)                            # select algo
-            wd.get(url2)                            # get actual profict in last 24 hours
+            try:
+                wd.get(url1)                            # select algo
+            except:
+                return False
+            try:
+                wd.get(url2)                            # get actual profict in last 24 hours
+            except:
+                return False
             profit_24hr = [float(item) for item in re.findall(r'",(.+?)]', wd.page_source)]
             profit_dict[key]['normalized_profit'] = sum(profit_24hr[-10:]) / 10
             profit_dict[key]['actual_profit'] = profit_dict[key]['normalized_profit'] \
                 * profit_dict[key]['hashrate']
-            wd.get(url3)                            # get pool status and miner quantity
+            try:
+                wd.get(url3)                            # get pool status and miner quantity
+            except:
+                return False
             miner_str = wd.find_element_by_class_name('main-left-title').text
             miner_qty = int(re.search(r', (\d+?) miners', miner_str).groups()[0])
             profit_dict[key]['miner_qty'] = miner_qty
+            logmsg = 'algo: ' + profit_dict[key]['algo'] + ',\t norm: ' + str(profit_dict[key]['normalized_profit']) \
+                + ',\t profit: ' + str(profit_dict[key]['actual_profit'])
+            logger.info(logmsg)
             # print profit_dict[key]['algo'], profit_dict[key]['actual_profit'], \
             #     profit_dict[key]['normalized_profit']
 
@@ -46,7 +61,5 @@ class MiningPool(object):
                 top_algo['profit'] = profit_dict[key]['actual_profit']
                 top_algo['miner'] = profit_dict[key]['miner']
                 top_algo['miner_qty'] = profit_dict[key]['miner_qty']
-
-        # print top_algo
 
         return top_algo
