@@ -20,7 +20,6 @@ miner_config = 'mining_machine.json'
 
 zpool = scraping.MiningPool(pool, config)
 
-# print zpool.getTopProfit()
 with open(miner_config) as fn:
     machine = json.load(fn)
 current_algo = {}
@@ -28,6 +27,10 @@ current_algo = {}
 while True:
     logger.info('Start scraping')
     top_algo = zpool.getTopProfit()         # get top algo
+    while not top_algo:
+        logger.warning('Scraping failed, wait 10 minutes and retry')
+        time.sleep(600)
+        top_algo = zpool.getTopProfit()     # if getTopProfit returns False, wait 10 minutes and retry
     logger.info(top_algo)
     if current_algo:
         process.kill()                      # kill current miner, it doesn't hurt
@@ -43,5 +46,6 @@ while True:
     process = subprocess.Popen([top_algo['miner'], '-a', top_algo['algo'], '-o', stratum, '-u',
                                 machine['wallet'], '-p', machine['name'], 'c=BTC'])
 
+    # time.sleep(60)
     time.sleep(machine['interval']*60)
 
