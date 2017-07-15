@@ -1,13 +1,18 @@
 __author__ = 'wuqingyi22@gmail.com'
 
 import time
-from datetime import datetime
 import json
 import subprocess
 import scraping
 import logging
 
-logging.basicConfig(filename='runtime.log')
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s [%(levelname)s] - %(message)s',
+    filename='runtime.log'
+)
+logger = logging.getLogger()
+
 pool = 'http://zpool.ca/'
 pool_url_base = '.mine.zpool.ca'
 config = 'algos_zpool.json'
@@ -21,10 +26,12 @@ with open(miner_config) as fn:
 current_algo = {}
 
 while True:
+    logger.info('Start scraping')
     top_algo = zpool.getTopProfit()         # get top algo
-    logging.info(datetime.now().isoformat(), top_algo)
+    logger.info(top_algo)
     if current_algo:
         process.kill()                      # kill current miner, it doesn't hurt
+        logger.info('Killing current miner')
         time.sleep(10)
     current_algo = top_algo
 
@@ -32,10 +39,9 @@ while True:
     stratum = 'stratum+tcp://' + top_algo['algo'] + pool_url_base + ':' + top_algo['port']
     mining_cmd = [top_algo['miner'], '-a', top_algo['algo'], '-o', stratum, '-u',
                                 machine['wallet'], '-p', machine['name'], 'c=BTC']
-    print mining_cmd
+    logger.info(' '.join([str(item) for item in mining_cmd]))
     process = subprocess.Popen([top_algo['miner'], '-a', top_algo['algo'], '-o', stratum, '-u',
                                 machine['wallet'], '-p', machine['name'], 'c=BTC'])
 
-    time.sleep(30)
-    # time.sleep(machine['interval']*60)
+    time.sleep(machine['interval']*60)
 
