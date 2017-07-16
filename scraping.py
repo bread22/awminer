@@ -45,7 +45,10 @@ class MiningPool(object):
             except:
                 return False
             miner_str = wd.find_element_by_class_name('main-left-title').text
-            miner_qty = int(re.search(r', (\d+?) miners', miner_str).groups()[0])
+            try:
+                miner_qty = int(re.search(r', (\d+?) miners', miner_str).groups()[0])
+            except:
+                miner_qty = 0                           # if miner is 0, it is not shown on page, then error occurs
             profit_dict[key]['miner_qty'] = miner_qty
             logmsg = 'algo: ' + profit_dict[key]['algo'] + ',\t norm: ' + str(profit_dict[key]['normalized_profit']) \
                 + ',\t profit: ' + str(profit_dict[key]['actual_profit'])
