@@ -34,21 +34,19 @@ class MiningPool(object):
                 return False
             try:
                 wd.get(url2)                            # get actual profict in last 24 hours
+                profit_24hr = [float(item) for item in re.findall(r'",(.+?)]', wd.page_source)]
+                profit_dict[key]['normalized_profit'] = sum(profit_24hr[-10:]) / 10
+                profit_dict[key]['actual_profit'] = profit_dict[key]['normalized_profit'] \
+                    * profit_dict[key]['hashrate']
             except:
                 return False
-            profit_24hr = [float(item) for item in re.findall(r'",(.+?)]', wd.page_source)]
-            profit_dict[key]['normalized_profit'] = sum(profit_24hr[-10:]) / 10
-            profit_dict[key]['actual_profit'] = profit_dict[key]['normalized_profit'] \
-                * profit_dict[key]['hashrate']
             try:
                 wd.get(url3)                            # get pool status and miner quantity
-            except:
-                return False
-            miner_str = wd.find_element_by_class_name('main-left-title').text
-            try:
+                miner_str = wd.find_element_by_class_name('main-left-title').text
                 miner_qty = int(re.search(r', (\d+?) miners', miner_str).groups()[0])
             except:
-                miner_qty = 0                           # if miner is 0, it is not shown on page, then error occurs
+                return False
+
             profit_dict[key]['miner_qty'] = miner_qty
             logmsg = 'algo: ' + profit_dict[key]['algo'] + ',\t norm: ' + str(profit_dict[key]['normalized_profit']) \
                 + ',\t profit: ' + str(profit_dict[key]['actual_profit'])
