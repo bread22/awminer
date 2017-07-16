@@ -19,32 +19,28 @@ class MiningPool(object):
             profit_dict = json.load(fn)
 
         for key in profit_dict:
-            profit_dict[key]['actual_profit'] = 0   # initialize these 2
-            profit_dict[key]['miner_qty'] = 0
-            if profit_dict[key]['hashrate'] == 0 or not profit_dict[key]['miner']:
-                continue                            # skip algo not in use to save some time
             algo = profit_dict[key]['algo']
             url1 = 'http://zpool.ca/site/gomining?algo=' + algo
             url2 = 'http://zpool.ca/site/graph_price_results'
             url3 = 'http://zpool.ca/site/mining_results'
+            profit_dict[key]['actual_profit'] = 0   # initialize these 2
+            profit_dict[key]['miner_qty'] = 0
+            if profit_dict[key]['hashrate'] == 0 or not profit_dict[key]['miner']:
+                continue                            # skip algo not in use to save some time
             wd = webdriver.PhantomJS()
             try:
                 wd.get(url1)                            # select algo
-            except:
-                return False
-            try:
-                wd.get(url2)                            # get actual profict in last 24 hours
+                wd.get(url2)                            # get normalized profit in last 24 hours
                 profit_24hr = [float(item) for item in re.findall(r'",(.+?)]', wd.page_source)]
                 profit_dict[key]['normalized_profit'] = sum(profit_24hr[-10:]) / 10
+                # calculate actual profit
                 profit_dict[key]['actual_profit'] = profit_dict[key]['normalized_profit'] \
                     * profit_dict[key]['hashrate']
-            except:
-                return False
-            try:
                 wd.get(url3)                            # get pool status and miner quantity
                 miner_str = wd.find_element_by_class_name('main-left-title').text
                 miner_qty = int(re.search(r', (\d+?) miners', miner_str).groups()[0])
             except:
+                # if there is any error during scraping, return False, preventing miner from stopping
                 return False
 
             profit_dict[key]['miner_qty'] = miner_qty
