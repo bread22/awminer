@@ -38,8 +38,10 @@ class MiningPool(object):
                     * profit_dict[key]['hashrate']
                 wd.get(url3)                            # get pool status and miner quantity
                 miner_str = wd.find_element_by_class_name('main-left-title').text
-                miner_qty = int(re.search(r', (\d+?) miners', miner_str).groups()[0])
+                miner_qty = int(re.search(r', (\d+?) miner', miner_str).groups()[0])
+                wd.close()
             except:
+                wd.close()
                 # if there is any error during scraping, return False, preventing miner from stopping
                 return False
 
