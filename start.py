@@ -13,14 +13,9 @@ logging.basicConfig(
 )
 logger = logging.getLogger()
 
-pool = 'http://zpool.ca/'
-pool_url_base = '.mine.zpool.ca'
-config = 'algos_zpool.json'
-miner_config = 'mining_machine.json'
+zpool = scraping.Zpool('rig_zpool.json', 'algos_zpool.json')
 
-zpool = scraping.MiningPool(pool, config)
-
-with open(miner_config) as fn:
+with open(zpool.config) as fn:
     machine = json.load(fn)
 current_algo = {}
 
