@@ -10,17 +10,15 @@ logger = logging.getLogger('runtime.log')
 
 
 class MiningPool(object):
-    def __init__(self, rig_config):
-        self.config = rig_config        # rig configuration file name in json format
+    def __init__(self, rig_config, algo_config):
+        self.config = rig_config                # rig configuration file name in json format
+        self.algo_config = algo_config          # pool algo configuration (hashrate) file name in json format
         with open(self.config) as fn:
             rig_conf = json.load(fn)
         self.pool_url_base = rig_conf['pool_url_base']
 
 
 class Zpool(MiningPool):
-    def __init__(self, rig_config, algo_config):
-        MiningPool.__init__(self, rig_config)
-        self.algo_config = algo_config        # pool algo configuration file name in json format
 
     def getTopProfit(self):
         with open(self.algo_config) as fn:
@@ -70,3 +68,8 @@ class Zpool(MiningPool):
                 top_algo['miner_qty'] = profit_dict[key]['miner_qty']
 
         return top_algo
+
+
+class MiningPoolHub(MiningPool):
+
+    
