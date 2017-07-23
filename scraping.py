@@ -10,12 +10,20 @@ logger = logging.getLogger('runtime.log')
 
 
 class MiningPool(object):
-    def __init__(self, url, config):
-        self.url = url
-        self.config = config        # pool configuration file name in json format
+    def __init__(self, rig_config):
+        self.config = rig_config        # rig configuration file name in json format
+        with open(self.config) as fn:
+            rig_conf = json.load(fn)
+        self.pool_url_base = rig_conf['pool_url_base']
+
+
+class Zpool(MiningPool):
+    def __init__(self, rig_config, algo_config):
+        MiningPool.__init__(self, rig_config)
+        self.algo_config = algo_config        # pool algo configuration file name in json format
 
     def getTopProfit(self):
-        with open(self.config) as fn:
+        with open(self.algo_config) as fn:
             profit_dict = json.load(fn)
 
         for key in profit_dict:
