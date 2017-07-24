@@ -37,7 +37,7 @@ class Zpool(MiningPool):
             url1 = 'http://zpool.ca/site/gomining?algo=' + algo
             url2 = 'http://zpool.ca/site/graph_price_results'
             url3 = 'http://zpool.ca/site/mining_results'
-            profit_dict[key]['actual_profit'] = 0   # initialize these 2
+            profit_dict[key]['actual_p'] = 0   # initialize these 2
             profit_dict[key]['miner_qty'] = 0
             if profit_dict[key]['hashrate'] == 0 or not profit_dict[key]['miner']:
                 continue                            # skip algo not in use to save some time
@@ -112,8 +112,8 @@ class MiningPoolHub(MiningPool):
                     else:
                         profit = float(profit.replace(',', ''))
                     self.profit_dict[raw_hash[i]]['norm_p'].append(profit)
-                    self.profit_dict['actual_p'] = self.profit_dict['hashrate'] * \
-                        sum(self.profit_dict['norm_p']) / len(self.profit_dict['norm_p'])
+                    self.profit_dict[raw_hash[i]]['actual_p'] = self.profit_dict[raw_hash[i]]['hashrate'] * \
+                        sum(self.profit_dict[raw_hash[i]]['norm_p']) / len(self.profit_dict[raw_hash[i]]['norm_p'])
                     logmsg = 'MPH: algo: ' + self.profit_dict[raw_hash[i]]['algo'] + ',\t norm: ' + \
                              str(self.profit_dict[raw_hash[i]]['norm_p']) + ',\t profit: ' + \
                              str(self.profit_dict[raw_hash[i]]['actual_p'])
@@ -125,9 +125,10 @@ class MiningPoolHub(MiningPool):
                         algo = 'myr-gr'
                     self.profit_dict[raw_hash[i]] = {}
                     self.profit_dict[raw_hash[i]]['algo'] = algo
+                    self.profit_dict[raw_hash[i]]['miner'] = self.findMiner(algo)
                     self.profit_dict[raw_hash[i]]['norm_p'] = []
                     self.profit_dict[raw_hash[i]]['actual_p'] = 0.0
-                    self.profit_dict[raw_hash[i]]['hashrate'] = self.findHashrate(algo)
+                    self.profit_dict[raw_hash[i]]['hashrate'] = self.findHashrate(algo)                 
             i += 1
         page.close()
 
@@ -142,6 +143,12 @@ class MiningPoolHub(MiningPool):
                     return self.hash_dict[key]['hashrate'] / 10**3
         return 0.0        # if algo is not found, return 0
 
+    def findMiner(self, algo):
+        for key in self.hash_dict:
+            if self.hash_dict[key]['algo'] == algo:
+                return self.hash_dict[key]['miner']
+        return None        # if algo is not found, return None
+
     def resetProfit(self):
         for key in self.profit_dict:
             self.profit_dict[key]['norm_p'] = []
@@ -152,8 +159,8 @@ class MiningPoolHub(MiningPool):
             if self.profit_dict[key]['actual_p'] > self.top_algo['profit']:
                 self.top_algo['port'] = key
                 self.top_algo['algo'] = self.profit_dict[key]['algo']
-                self.top_algo['profit'] = self.profit_dict['actual_p']
-                self.top_algo['miner'] = self.profit_dict['miner']
+                self.top_algo['profit'] = self.profit_dict[key]['actual_p']
+                self.top_algo['miner'] = self.profit_dict[key]['miner']
                 self.top_algo['stratum'] = 'stratum+tcp://' + self.top_algo['url_base'] + \
                                            ':' + self.top_algo['port']
 
