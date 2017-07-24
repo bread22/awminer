@@ -116,10 +116,12 @@ class MiningPoolHub(MiningPool):
                     algo = raw_hash[i-1]
                     if algo == 'myriad-groestl':
                         algo = 'myr-gr'
+                    self.profit_dict[raw_hash[i]] = {}
                     self.profit_dict[raw_hash[i]]['algo'] = algo
                     self.profit_dict[raw_hash[i]]['norm_p'] = []
                     self.profit_dict[raw_hash[i]]['actual_p'] = 0.0
                     self.profit_dict[raw_hash[i]]['hashrate'] = self.findHashrate(algo)
+            i += 1
         page.close()
 
     def findHashrate(self, algo):
