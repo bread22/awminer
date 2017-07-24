@@ -54,7 +54,7 @@ class Zpool(MiningPool):
                 return False
 
             profit_dict[key]['miner_qty'] = miner_qty
-            logmsg = 'algo: ' + profit_dict[key]['algo'] + ',\t norm: ' + str(profit_dict[key]['norm_p']) \
+            logmsg = 'ZPOOL: algo: ' + profit_dict[key]['algo'] + ',\t norm: ' + str(profit_dict[key]['norm_p']) \
                 + ',\t profit: ' + str(profit_dict[key]['actual_p'])
             logger.info(logmsg)
             # print profit_dict[key]['algo'], profit_dict[key]['actual_p'], \
@@ -107,6 +107,10 @@ class MiningPoolHub(MiningPool):
                     self.profit_dict[raw_hash[i]]['norm_p'].append(profit)
                     self.profit_dict['actual_p'] = self.profit_dict['hashrate'] * \
                         sum(self.profit_dict['norm_p']) / len(self.profit_dict['norm_p'])
+                    logmsg = 'MPH: algo: ' + self.profit_dict[raw_hash[i]]['algo'] + ',\t norm: ' + \
+                             str(self.profit_dict[raw_hash[i]]['norm_p']) + ',\t profit: ' + \
+                             str(self.profit_dict[raw_hash[i]]['actual_p'])
+                    logger.info(logmsg)
                 else:
                     # create new item in self.profit_dict
                     algo = raw_hash[i-1]
