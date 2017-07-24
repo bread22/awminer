@@ -60,7 +60,7 @@ class Zpool(MiningPool):
             # print profit_dict[key]['algo'], profit_dict[key]['actual_p'], \
             #     profit_dict[key]['norm_p']
 
-        top_algo = {'profit': 0}
+        top_algo = {'profit': 0.0}
         for key in profit_dict:
             if profit_dict[key]['actual_p'] > top_algo['profit'] and profit_dict[key]['miner_qty'] > 10:
                 top_algo['port'] = key
@@ -82,7 +82,10 @@ class MiningPoolHub(MiningPool):
 
     def updateProfit(self):
         url = 'http://miningpoolhub.com/?page=home&normalize=none'
-        page = requests.get(url)
+        try:
+            page = requests.get(url)
+        except:
+            return
         tree = html.fromstring(page.content)
         # get hash data from 2nd <tbody>, which are no-switch ports
         xpath = '(//tbody)[position()=2]/tr/td/span/text()|(//tbody)[position()=2]/tr/td/text()'
@@ -95,8 +98,25 @@ class MiningPoolHub(MiningPool):
             # length 5 str starts with '20', it is a port number
             if len(raw_hash[i]) == 5 and raw_hash[i].startswith('20'):
                 if raw_hash[i] in self.profit_dict:
-                    self.profit_dict[raw_hash[i]]['norm_p'].append()
-
+                    # update profit data
+                    profit = raw_hash[i+1]
+                    if profit == '-':
+                        profit = 0.0
+                    else:
+                        profit = float(profit.replace(',', ''))
+                    self.profit_dict[raw_hash[i]]['norm_p'].append(profit)
+                    self.profit_dict['actual_p'] = self.profit_dict['hashrate'] * \
+                        sum(self.profit_dict['norm_p']) / len(self.profit_dict['norm_p'])
+                else:
+                    # create new item in self.profit_dict
+                    algo = raw_hash[i-1]
+                    if algo == 'myriad-groestl':
+                        algo = 'myr-gr'
+                    self.profit_dict[raw_hash[i]]['algo'] = algo
+                    self.profit_dict[raw_hash[i]]['norm_p'] = []
+                    self.profit_dict[raw_hash[i]]['actual_p'] = 0.0
+                    self.profit_dict[raw_hash[i]]['hashrate'] = self.findHashrate(algo)
+        page.close()
 
     def findHashrate(self, algo):
         for key in self.hash_dict:
@@ -107,4 +127,20 @@ class MiningPoolHub(MiningPool):
                     return self.hash_dict[key]['hashrate']
                 else:
                     return self.hash_dict[key]['hashrate'] / 10**3
-        return 0        # if algo is not found, return 0
+        return 0.0        # if algo is not found, return 0
+
+    def resetProfit(self):
+        for key in self.profit_dict:
+            self.profit_dict[key]['norm_p'] = []
+            self.profit_dict[key]['actual_p'] = 0.0
+
+    def getTopAlgo(self):
+        top_algo = {'profit': 0.0}
+        for key in self.profit_dict:
+            if self.profit_dict[key]['actual_p'] > top_algo['profit']:
+                top_algo['port'] = key
+                top_algo['algo'] = self.profit_dict[key]['algo']
+                top_algo['profit'] = self.profit_dict['actual_p']
+                top_algo['miner'] = self.profit_dict['miner']
+
+        return top_algo
