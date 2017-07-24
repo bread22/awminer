@@ -38,9 +38,9 @@ class Zpool(MiningPool):
                 wd.get(url1)                            # select algo
                 wd.get(url2)                            # get normalized profit in last 24 hours
                 profit_24hr = [float(item) for item in re.findall(r'",(.+?)]', wd.page_source)]
-                profit_dict[key]['normalized_profit'] = sum(profit_24hr[-10:]) / 10
+                profit_dict[key]['norm_p'] = sum(profit_24hr[-10:]) / 10
                 # calculate actual profit
-                profit_dict[key]['actual_profit'] = profit_dict[key]['normalized_profit'] \
+                profit_dict[key]['actual_p'] = profit_dict[key]['norm_p'] \
                     * profit_dict[key]['hashrate']
                 wd.get(url3)                            # get pool status and miner quantity
                 miner_str = wd.find_element_by_class_name('main-left-title').text
@@ -52,18 +52,18 @@ class Zpool(MiningPool):
                 return False
 
             profit_dict[key]['miner_qty'] = miner_qty
-            logmsg = 'algo: ' + profit_dict[key]['algo'] + ',\t norm: ' + str(profit_dict[key]['normalized_profit']) \
-                + ',\t profit: ' + str(profit_dict[key]['actual_profit'])
+            logmsg = 'algo: ' + profit_dict[key]['algo'] + ',\t norm: ' + str(profit_dict[key]['norm_p']) \
+                + ',\t profit: ' + str(profit_dict[key]['actual_p'])
             logger.info(logmsg)
-            # print profit_dict[key]['algo'], profit_dict[key]['actual_profit'], \
-            #     profit_dict[key]['normalized_profit']
+            # print profit_dict[key]['algo'], profit_dict[key]['actual_p'], \
+            #     profit_dict[key]['norm_p']
 
         top_algo = {'profit': 0}
         for key in profit_dict:
-            if profit_dict[key]['actual_profit'] > top_algo['profit'] and profit_dict[key]['miner_qty'] > 10:
+            if profit_dict[key]['actual_p'] > top_algo['profit'] and profit_dict[key]['miner_qty'] > 10:
                 top_algo['port'] = key
                 top_algo['algo'] = profit_dict[key]['algo']
-                top_algo['profit'] = profit_dict[key]['actual_profit']
+                top_algo['profit'] = profit_dict[key]['actual_p']
                 top_algo['miner'] = profit_dict[key]['miner']
                 top_algo['miner_qty'] = profit_dict[key]['miner_qty']
 
@@ -71,5 +71,10 @@ class Zpool(MiningPool):
 
 
 class MiningPoolHub(MiningPool):
+    def __init__(self, rig_config, algo_config):
+        MiningPool.__init__(self, rig_config, algo_config)
+        self.pool_profit_dict = {}                           # initialize a profit dict to store profit data
+        with open(self.algo_config) as fn:
+            profit_dict = json.load(fn)
 
-    
+    def updateProfit(self):
