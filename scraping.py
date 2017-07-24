@@ -22,7 +22,8 @@ class MiningPool(object):
         'profit': 0.0,
         'user': rig_conf['username'],
         'password': rig_conf['password'],
-        'url_base': rig_conf['pool_url_base']
+        'url_base': rig_conf['pool_url_base'],
+        'switch_interval': rig_conf['switch_interval']
         }
 
 
@@ -82,6 +83,9 @@ class Zpool(MiningPool):
 class MiningPoolHub(MiningPool):
     def __init__(self, rig_config, algo_config):
         MiningPool.__init__(self, rig_config, algo_config)
+        with open(self.config) as fn:
+            rig_conf = json.load(fn)
+        self.top_algo['fetch_interval'] = rig_conf['fetch_interval']
         with open(self.algo_config) as fn:
             self.hash_dict = json.load(fn)
         # convert profit_dict to use algo as key, easier to use in updateProfit
@@ -128,7 +132,8 @@ class MiningPoolHub(MiningPool):
                     self.profit_dict[raw_hash[i]]['miner'] = self.findMiner(algo)
                     self.profit_dict[raw_hash[i]]['norm_p'] = []
                     self.profit_dict[raw_hash[i]]['actual_p'] = 0.0
-                    self.profit_dict[raw_hash[i]]['hashrate'] = self.findHashrate(algo)                 
+                    self.profit_dict[raw_hash[i]]['hashrate'] = self.findHashrate(algo)   
+                    logger.info(self.profit_dict[raw_hash[i]])
             i += 1
         page.close()
 
@@ -136,11 +141,11 @@ class MiningPoolHub(MiningPool):
         for key in self.hash_dict:
             if self.hash_dict[key]['algo'] == algo:
                 if algo == 'equihash':
-                    return self.hash_dict[key]['hashrate'] / 10**6
+                    return float(self.hash_dict[key]['hashrate']) / 10**3
                 elif algo == 'blake2s' or algo == 'blakecoin':
-                    return self.hash_dict[key]['hashrate']
+                    return float(self.hash_dict[key]['hashrate']) * 10**3
                 else:
-                    return self.hash_dict[key]['hashrate'] / 10**3
+                    return float(self.hash_dict[key]['hashrate'])
         return 0.0        # if algo is not found, return 0
 
     def findMiner(self, algo):
