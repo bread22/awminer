@@ -15,9 +15,15 @@ class MiningPool(object):
     def __init__(self, rig_config, algo_config):
         self.config = rig_config                # rig configuration file name in json format
         self.algo_config = algo_config          # pool algo configuration (hashrate) file name in json format
+        # load rig config and contruct self.top_algo
         with open(self.config) as fn:
             rig_conf = json.load(fn)
-        self.pool_url_base = rig_conf['pool_url_base']
+        self.top_algo = {
+        'profit': 0.0,
+        'user': rig_conf['username'],
+        'password': rig_conf['password'],
+        'url_base': rig_conf['pool_url_base']
+        }
 
 
 class Zpool(MiningPool):
@@ -60,16 +66,17 @@ class Zpool(MiningPool):
             # print profit_dict[key]['algo'], profit_dict[key]['actual_p'], \
             #     profit_dict[key]['norm_p']
 
-        top_algo = {'profit': 0.0}
         for key in profit_dict:
-            if profit_dict[key]['actual_p'] > top_algo['profit'] and profit_dict[key]['miner_qty'] > 10:
-                top_algo['port'] = key
-                top_algo['algo'] = profit_dict[key]['algo']
-                top_algo['profit'] = profit_dict[key]['actual_p']
-                top_algo['miner'] = profit_dict[key]['miner']
-                top_algo['miner_qty'] = profit_dict[key]['miner_qty']
+            if profit_dict[key]['actual_p'] > self.top_algo['profit'] and profit_dict[key]['miner_qty'] > 10:
+                self.top_algo['port'] = key
+                self.top_algo['algo'] = profit_dict[key]['algo']
+                self.top_algo['profit'] = profit_dict[key]['actual_p']
+                self.top_algo['miner'] = profit_dict[key]['miner']
+                self.top_algo['miner_qty'] = profit_dict[key]['miner_qty']
+                self.top_algo['stratum'] = 'stratum+tcp://' + self.top_algo['algo'] + \
+                                           self.top_algo['url_base'] + ':' + self.top_algo['port']
 
-        return top_algo
+        return self.top_algo
 
 
 class MiningPoolHub(MiningPool):
@@ -141,12 +148,13 @@ class MiningPoolHub(MiningPool):
             self.profit_dict[key]['actual_p'] = 0.0
 
     def getTopAlgo(self):
-        top_algo = {'profit': 0.0}
         for key in self.profit_dict:
-            if self.profit_dict[key]['actual_p'] > top_algo['profit']:
-                top_algo['port'] = key
-                top_algo['algo'] = self.profit_dict[key]['algo']
-                top_algo['profit'] = self.profit_dict['actual_p']
-                top_algo['miner'] = self.profit_dict['miner']
+            if self.profit_dict[key]['actual_p'] > self.top_algo['profit']:
+                self.top_algo['port'] = key
+                self.top_algo['algo'] = self.profit_dict[key]['algo']
+                self.top_algo['profit'] = self.profit_dict['actual_p']
+                self.top_algo['miner'] = self.profit_dict['miner']
+                self.top_algo['stratum'] = 'stratum+tcp://' + self.top_algo['url_base'] + \
+                                           ':' + self.top_algo['port']
 
-        return top_algo
+        return self.top_algo
