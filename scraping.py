@@ -2,6 +2,8 @@ import json
 import re
 import logging
 from selenium import webdriver
+from lxml import html
+import requests
 
 
 __author__ = 'wuqingyi22@gmail.com'
@@ -73,8 +75,36 @@ class Zpool(MiningPool):
 class MiningPoolHub(MiningPool):
     def __init__(self, rig_config, algo_config):
         MiningPool.__init__(self, rig_config, algo_config)
-        self.pool_profit_dict = {}                           # initialize a profit dict to store profit data
         with open(self.algo_config) as fn:
-            profit_dict = json.load(fn)
+            self.hash_dict = json.load(fn)
+        # convert profit_dict to use algo as key, easier to use in updateProfit
+        self.profit_dict = {}
 
     def updateProfit(self):
+        url = 'http://miningpoolhub.com/?page=home&normalize=none'
+        page = requests.get(url)
+        tree = html.fromstring(page.content)
+        # get hash data from 2nd <tbody>, which are no-switch ports
+        xpath = '(//tbody)[position()=2]/tr/td/span/text()|(//tbody)[position()=2]/tr/td/text()'
+        raw_hash = tree.xpath(xpath)
+        # convert raw_hash to str list, and convert them to lower to match profit_dict
+        raw_hash = map(str, raw_hash)
+        raw_hash = [item.lower() for item in raw_hash]
+        i = 0
+        while i < len(raw_hash):
+            # length 5 str starts with '20', it is a port number
+            if len(raw_hash[i]) == 5 and raw_hash[i].startswith('20'):
+                if raw_hash[i] in self.profit_dict:
+                    self.profit_dict[raw_hash[i]]['norm_p'].append()
+
+
+    def findHashrate(self, algo):
+        for key in self.hash_dict:
+            if self.hash_dict[key]['algo'] == algo:
+                if algo == 'equihash':
+                    return self.hash_dict[key]['hashrate'] / 10**6
+                elif algo == 'blake2s' or algo == 'blakecoin':
+                    return self.hash_dict[key]['hashrate']
+                else:
+                    return self.hash_dict[key]['hashrate'] / 10**3
+        return 0        # if algo is not found, return 0
