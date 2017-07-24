@@ -1,6 +1,6 @@
 {
-	"username": "bread22",
-	"rigname": "desk",
+	"username": "bread22.desk",
+	"password": "x",
 	"fetch_interval": 5,
 	"pool_url_base": "hub.miningpoolhub.com"
 }
