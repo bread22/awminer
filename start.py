@@ -17,13 +17,11 @@ zpool = scraping.Zpool('rig_zpool.json', 'algos_zpool.json')
 mph = scraping.MiningPoolHub('rig_mph.json', 'algos_zpool.json')
 mph.updateProfit()
 
-with open(zpool.config) as fn:
-    machine = json.load(fn)
-
 current_algo = {}
 
 while True:
     logger.info('Start scraping')
+    mph.updateProfit()
     zpool_top = zpool.getTopProfit()         # get top algo
     mph_top = mph.getTopAlgo()
     while not zpool_top and not mph_top:
@@ -35,31 +33,29 @@ while True:
     logger.info(mph_top)
 
     if current_algo:
-        # process.kill()                      # kill current miner, it doesn't hurt
-        # logger.info('Killing current miner')
-        # time.sleep(10)
-        pass
+        process.kill()                      # kill current miner, it doesn't hurt
+        logger.info('Killing current miner')
+        time.sleep(5)
     if zpool_top['profit'] >= mph_top['profit']:
         current_algo = zpool_top
-        current_algo['url_base'] = zpool.pool_url_base
     else:
         current_algo = mph_top
-        current_algo['url_base'] = mph.pool_url_base
 
+    mph.resetProfit()
     # start new mining process
-    # stratum = 'stratum+tcp://' + top_algo['algo'] + pool_url_base + ':' + top_algo['port']
-    # mining_cmd = [top_algo['miner'], '-a', top_algo['algo'], '-o', stratum, '-u',
-    #                             machine['wallet'], '-p', machine['name'], 'c=BTC']
-    # logger.info(' '.join([str(item) for item in mining_cmd]))
-    # process = subprocess.Popen([top_algo['miner'], '-a', top_algo['algo'], '-o', stratum, '-u',
-    #                             machine['wallet'], '-p', machine['name'], 'c=BTC'])
+    mining_cmd = [current_algo['miner'], '-a', current_algo['algo'], '-o',
+                  current_algo['stratum'], '-u', current_algo['user'],
+                  '-p', current_algo['password']]
+    logger.info(' '.join([str(item) for item in mining_cmd]))
+    process = subprocess.Popen([current_algo['miner'], '-a', current_algo['algo'], '-o', current_algo['stratum'],
+                                '-u', current_algo['user'], '-p', current_algo['password']])
 
     timer = 0
-    while timer < machine['switch_interval'] / 5:
+    while timer < mph.top_algo['switch_interval'] / mph.top_algo['fetch_interval']:
         timer += 1
-        # if process.poll() == 0:             # if mining process dies, break wait loop and start next one
-        #     break
+        if process.poll() == 0:             # if mining process dies, break wait loop and start next one
+            break
         mph.updateProfit()                  # poll MPH to update current algo profits
-        time.sleep(300)
+        time.sleep(mph.top_algo['fetch_interval']*60)
 
 
