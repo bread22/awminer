@@ -1,0 +1,7 @@
+{
+	"username": "bread22.desk",
+	"password": "x",
+	"fetch_interval": 5,
+	"switch_interval": 120,
+	"pool_url_base": "hub.miningpoolhub.com"
+}
