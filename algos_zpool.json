@@ -119,6 +119,10 @@
 		"algo": "lyra2v2",
 		"hashrate": 71,
 		"miner": "ccminerAlexis78.exe"},
+    "8433": {
+		"algo": "skunk",
+		"hashrate": 71,
+		"miner": "ccminer-skunk.exe"},
 	"3333":	{
 		"algo": "sha256",
 		"hashrate": 0,
