@@ -127,6 +127,8 @@ class MiningPoolHub(MiningPool):
                     algo = raw_hash[i-1]
                     if algo == 'myriad-groestl':
                         algo = 'myr-gr'
+                    if algo == 'lyra2re2':
+                        algo = 'lyra2v2'
                     self.profit_dict[raw_hash[i]] = {}
                     self.profit_dict[raw_hash[i]]['algo'] = algo
                     self.profit_dict[raw_hash[i]]['miner'] = self.findMiner(algo)
