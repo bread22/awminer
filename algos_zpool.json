@@ -93,7 +93,7 @@
 		"miner": "ccminerTanguy.exe"},
 	"5433": {
 		"algo": "myr-gr",
-		"hashrate": 130,
+		"hashrate": 128,
 		"miner": "ccminerAlexis78.exe"},
 	"3555":	{
 		"algo": "timetravel",
@@ -114,6 +114,10 @@
 	"4933": {
 		"algo": "skein",
 		"hashrate": 970,
+		"miner": "ccminerAlexis78.exe"},
+    "4533": {
+		"algo": "lyra2v2",
+		"hashrate": 71,
 		"miner": "ccminerAlexis78.exe"},
 	"3333":	{
 		"algo": "sha256",
