@@ -118,10 +118,10 @@ class MiningPoolHub(MiningPool):
                     self.profit_dict[raw_hash[i]]['norm_p'].append(profit)
                     self.profit_dict[raw_hash[i]]['actual_p'] = self.profit_dict[raw_hash[i]]['hashrate'] * \
                         sum(self.profit_dict[raw_hash[i]]['norm_p']) / len(self.profit_dict[raw_hash[i]]['norm_p'])
-                    logmsg = 'MPH: algo: ' + self.profit_dict[raw_hash[i]]['algo'] + ',\t norm: ' + \
-                             str(self.profit_dict[raw_hash[i]]['norm_p']) + ',\t profit: ' + \
-                             str(self.profit_dict[raw_hash[i]]['actual_p'])
-                    logger.info(logmsg)
+                    # logmsg = 'MPH: algo: ' + self.profit_dict[raw_hash[i]]['algo'] + ',\t norm: ' + \
+                    #          str(self.profit_dict[raw_hash[i]]['norm_p']) + ',\t profit: ' + \
+                    #          str(self.profit_dict[raw_hash[i]]['actual_p'])
+                    # logger.info(logmsg)
                 else:
                     # create new item in self.profit_dict
                     algo = raw_hash[i-1]
@@ -170,5 +170,5 @@ class MiningPoolHub(MiningPool):
                 self.top_algo['miner'] = self.profit_dict[key]['miner']
                 self.top_algo['stratum'] = 'stratum+tcp://' + self.top_algo['url_base'] + \
                                            ':' + self.top_algo['port']
-
+        logger.info(self.profit_dict[self.top_algo['port']])
         return self.top_algo
