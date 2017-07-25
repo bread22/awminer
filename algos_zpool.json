@@ -121,7 +121,7 @@
 		"miner": "ccminerAlexis78.exe"},
     "8433": {
 		"algo": "skunk",
-		"hashrate": 71,
+		"hashrate": 30,
 		"miner": "ccminer-skunk.exe"},
 	"3333":	{
 		"algo": "sha256",
