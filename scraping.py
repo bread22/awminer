@@ -67,6 +67,7 @@ class Zpool(MiningPool):
             # print profit_dict[key]['algo'], profit_dict[key]['actual_p'], \
             #     profit_dict[key]['norm_p']
 
+        self.top_algo['profit'] = 0                 # reset top profit
         for key in profit_dict:
             if profit_dict[key]['actual_p'] > self.top_algo['profit'] and profit_dict[key]['miner_qty'] > 10:
                 self.top_algo['port'] = key
@@ -162,6 +163,7 @@ class MiningPoolHub(MiningPool):
             self.profit_dict[key]['actual_p'] = 0.0
 
     def getTopAlgo(self):
+        self.top_algo['profit'] = 0                 # reset top profit
         for key in self.profit_dict:
             if self.profit_dict[key]['actual_p'] > self.top_algo['profit']:
                 self.top_algo['port'] = key
