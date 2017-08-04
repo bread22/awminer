@@ -36,7 +36,7 @@ while True:
         process.kill()                      # kill current miner, it doesn't hurt
         logger.info('Killing current miner')
         time.sleep(5)
-    if zpool_top['profit'] >= mph_top['profit']:
+    if zpool_top['profit'] >= 1.2 * mph_top['profit']:
         current_algo = zpool_top
     else:
         current_algo = mph_top

@@ -119,6 +119,9 @@ class MiningPoolHub(MiningPool):
                     self.profit_dict[raw_hash[i]]['norm_p'].append(profit)
                     self.profit_dict[raw_hash[i]]['actual_p'] = self.profit_dict[raw_hash[i]]['hashrate'] * \
                         sum(self.profit_dict[raw_hash[i]]['norm_p']) / len(self.profit_dict[raw_hash[i]]['norm_p'])
+                    # set profit to zero if no miner available
+                    if not self.profit_dict[raw_hash[i]]['miner']:
+                        self.profit_dict[raw_hash[i]]['actual_p']
                     # logmsg = 'MPH: algo: ' + self.profit_dict[raw_hash[i]]['algo'] + ',\t norm: ' + \
                     #          str(self.profit_dict[raw_hash[i]]['norm_p']) + ',\t profit: ' + \
                     #          str(self.profit_dict[raw_hash[i]]['actual_p'])
