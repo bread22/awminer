@@ -57,8 +57,9 @@ class Zpool(MiningPool):
                 wd.close()
             except:
                 wd.close()
-                # if there is any error during scraping, return False, preventing miner from stopping
-                return False
+                # if there is any error during scraping, return top_algo with profit 0
+                self.top_algo['profit'] = 0
+                return self.top_algo
 
             profit_dict[key]['miner_qty'] = miner_qty
             logmsg = 'ZPOOL: algo: ' + profit_dict[key]['algo'] + ',\t norm: ' + str(profit_dict[key]['norm_p']) \
