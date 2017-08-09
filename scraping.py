@@ -169,7 +169,8 @@ class MiningPoolHub(MiningPool):
     def getTopAlgo(self):
         self.top_algo['profit'] = 0                 # reset top profit
         for key in self.profit_dict:
-            if self.profit_dict[key]['actual_p'] > self.top_algo['profit']:
+            if self.profit_dict[key]['actual_p'] > self.top_algo['profit']\
+                    and self.profit_dict[key]['miner']:         # miner cannot be None
                 self.top_algo['port'] = key
                 self.top_algo['algo'] = self.profit_dict[key]['algo']
                 self.top_algo['profit'] = self.profit_dict[key]['actual_p']
